@@ -16,7 +16,7 @@ export default class AuthHandler {
 
   public signUp(employeeInputDTO: IEmployeeInputDTO): Promise<{ employee: IEmployee; token: string }> {
     try {
-
+      
     }
 
   }

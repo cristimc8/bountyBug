@@ -28,6 +28,7 @@
     "sequelize": "^6.19.0",
     "ts-node": "^10.7.0",
     "typedi": "^0.10.0",
+    "typeorm": "^0.3.6",
     "winston": "^3.7.2"
   },
   "devDependencies": {
