@@ -9,7 +9,8 @@ export class Role {
   @Column({
     type: "enum",
     enum: RoleEnum,
-    default: RoleEnum.Programmer
+    default: RoleEnum.Programmer,
+    unique: true
   })
   name: RoleEnum;
 }

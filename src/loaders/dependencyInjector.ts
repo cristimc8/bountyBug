@@ -1,17 +1,8 @@
 import { Container } from 'typedi';
 import LoggerInstance from './logger';
-import config from '@/config';
+import AuthHandler from "@/services/auth/authHandler";
 
-export default ({ mongoConnection, models }: { mongoConnection; models: { name: string; model: any }[] }) => {
-  try {
-    models.forEach(m => {
-      Container.set(m.name, m.model);
-    });
-
+export default () => {
     Container.set('logger', LoggerInstance);
-
-  } catch (e) {
-    LoggerInstance.error('🔥 Error on dependency injector loader: %o', e);
-    throw e;
-  }
+    Container.set('AuthHandler', AuthHandler);
 };
