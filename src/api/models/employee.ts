@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Role } from "@/api/models/role";
+import { Bug } from "@/api/models/bug";
 
 @Entity()
 export class Employee {
@@ -22,4 +23,10 @@ export class Employee {
     eager: true
   })
   role: Role;
+
+  @OneToMany(() => Bug, bug => bug.assignee)
+  assignedBugs: Bug[];
+
+  @OneToMany(() => Bug, bug => bug.creator)
+  createdBugs: Bug[];
 }

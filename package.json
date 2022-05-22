@@ -26,6 +26,7 @@
     "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.19.0",
+    "socket.io": "^4.5.0",
     "ts-node": "^10.7.0",
     "typedi": "^0.10.0",
     "typeorm": "^0.3.6",

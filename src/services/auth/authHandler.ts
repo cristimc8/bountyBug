@@ -24,38 +24,40 @@ export default class AuthHandler {
   }
 
   public async signUp(employeeInputDTO: IEmployeeInputDTO): Promise<{ employee: IEmployee; token: string }> {
-    try {
-      const salt = randomBytes(32);
-      this.logger.silly('Hashing password');
-      const hashedPassword = await argon2.hash(employeeInputDTO.password, { salt });
+    const existingEmployee = await this.employeeRepo.findOneBy({ username: employeeInputDTO.username });
 
-      this.logger.silly('Creating employee db record');
-      const employee = new Employee();
-      employee.role = await this.roleRepo.findOneBy({ name: employeeInputDTO.role });
-      employee.hash = hashedPassword;
-      employee.username = employeeInputDTO.username;
-      employee.salt = salt.toString('hex');
-
-      const employeeRecord: Employee = await this.employeeRepo.save(employee);
-      this.logger.silly('Employee created');
-
-      this.logger.silly('Generating JWT');
-      const token = this.generateToken(employeeRecord);
-
-      const employeeRecordToReturn = {
-        id: employeeRecord.id,
-        username: employeeRecord.username,
-        role: employeeRecord.role.name
-      };
-      return { employee: employeeRecordToReturn, token };
-    } catch (e) {
-      this.logger.error(e);
+    if (existingEmployee) {
+      throw new Error('Username already exists!');
     }
+
+    const salt = randomBytes(32);
+    this.logger.silly('Hashing password');
+    const hashedPassword = await argon2.hash(employeeInputDTO.password, { salt });
+
+    this.logger.silly('Creating employee db record');
+    const employee: Employee = new Employee();
+    employee.role = await this.roleRepo.findOneBy({ name: employeeInputDTO.role });
+    employee.hash = hashedPassword;
+    employee.username = employeeInputDTO.username;
+    employee.salt = salt.toString('hex');
+
+    const employeeRecord: Employee = await this.employeeRepo.save(employee);
+    this.logger.silly('Employee created');
+
+    this.logger.silly('Generating JWT');
+    const token = this.generateToken(employeeRecord);
+
+    const employeeRecordToReturn = {
+      id: employeeRecord.id,
+      username: employeeRecord.username,
+      role: employeeRecord.role.name
+    };
+    return { employee: employeeRecordToReturn, token };
   }
 
   public async signIn(employeeInputDTO: Partial<IEmployeeInputDTO>): Promise<{ employee: IEmployee, token: string }> {
     const employeeRecord = await this.employeeRepo.findOneBy({ username: employeeInputDTO.username });
-    console.log(employeeRecord)
+    console.log(employeeRecord);
     if (!employeeRecord) {
       throw new Error('No employee found with this username!');
     }

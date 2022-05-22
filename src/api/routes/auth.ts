@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { isAdmin } from "@/api/middleware/authentication";
+import { isAdmin, isAuthenticated } from "@/api/middleware/authentication";
 import { Container } from "typedi";
 import AuthHandler from "@/services/auth/authHandler";
 import { IEmployeeInputDTO } from "@/interfaces/IEmployee";
@@ -13,13 +13,14 @@ export default (app: Router) => {
 
   route.post(
       '/signup',
-      isAdmin,
       mapInputEntities,
+      isAuthenticated,
+      isAdmin,
       async (req, res, next) => {
         try {
           const authServiceInstance = Container.get(AuthHandler);
           const { employee, token } = await authServiceInstance.signUp(req.body as IEmployeeInputDTO);
-          return res.status(201).json({ employee, token });
+          return res.sendStatus(201);
         } catch (e) {
           logger.error(e);
           return next(e);
